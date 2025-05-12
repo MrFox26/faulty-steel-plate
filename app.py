@@ -1,59 +1,52 @@
+# app.py
+
 import streamlit as st
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
+import pandas as pd
+import joblib
 from xgboost import XGBClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.svm import SVC
 
-# Streamlit App
-st.title("Steel Plate Fault Prediction")
+# Load the trained model
+model = joblib.load('xgboost_model.pkl')
 
-uploaded_file = st.file_uploader("Upload faults.csv", type=["csv"])
+# Define the label mapping used earlier
+label_mapping = {
+    'Bumps': 0,
+    'Dirtiness': 1,
+    'K_Scatch': 2,
+    'Other_Faults': 3,
+    'Pastry': 4,
+    'Stains': 5,
+    'Z_Scratch': 6
+}
+inv_label_mapping = {v: k for k, v in label_mapping.items()}
 
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    st.write("### Raw Data Sample", df.sample(5))
+# UI title
+st.title("Steel Fault Type Prediction App")
 
-    # Combine multiple target columns into one
-    target_cols = df.columns[-7:]
-    df['target'] = df[target_cols].idxmax(axis=1)
-    df = df.drop(columns=target_cols)
+st.write("Enter the features to predict the fault type.")
 
-    X = df.drop(columns=['target'])
-    y = df['target']
+# Feature input
+features = {}
 
-    st.write("### Class Distribution", y.value_counts())
+numerical_columns = [
+    'X_Minimum', 'X_Maximum', 'Y_Minimum', 'Y_Maximum', 'Pixels_Areas',
+    'X_Perimeter', 'Y_Perimeter', 'Sum_of_Luminosity', 'Minimum_of_Luminosity',
+    'Maximum_of_Luminosity', 'Length_of_Conveyer', 'TypeOfSteel', 
+    'Outside_X_Index', 'Steel_Plate_Thickness', 'Edges_Index', 'Empty_Index', 
+    'Square_Index', 'Outside_Global_Index'
+]
 
-    # Split the data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2, random_state=42)
+# Create inputs for all features
+for col in numerical_columns:
+    features[col] = st.number_input(f"Enter {col}", value=0.0)
 
-    model_choice = st.selectbox("Choose Model", ["Random Forest", "XGBoost", "Decision Tree", "SVM"])
+# Steel_type input (binary: 0 or 1 after LabelEncoding)
+steel_type = st.selectbox("Steel Type", options=['A300', 'A400'])
+features['Steel_type'] = 0 if steel_type == 'A300' else 1
 
-    if st.button("Train Model"):
-        if model_choice == "Random Forest":
-            model = RandomForestClassifier(random_state=42)
-        elif model_choice == "XGBoost":
-            model = XGBClassifier(use_label_encoder=False, eval_metric='mlogloss')
-        elif model_choice == "Decision Tree":
-            model = DecisionTreeClassifier(random_state=42)
-        elif model_choice == "SVM":
-            model = SVC(probability=True)
-
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-
-        st.write("### Classification Report")
-        st.text(classification_report(y_test, y_pred))
-
-        cm = confusion_matrix(y_test, y_pred)
-        fig, ax = plt.subplots()
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax)
-        st.pyplot(fig)
-
-        st.success("Model trained and evaluated!")
+# Predict button
+if st.button("Predict Fault Type"):
+    input_df = pd.DataFrame([features])
+    prediction = model.predict(input_df)[0]
+    st.success(f"Predicted Fault Type: **{inv_label_mapping[prediction]}**")
