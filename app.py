@@ -48,7 +48,7 @@ input_data = pd.DataFrame([[
     Maximum_of_Luminosity, Length_of_Conveyer, Steel_Plate_Thickness,
     Edges_Index, Empty_Index, Square_Index, Outside_X_Index,
     Edges_X_Index, Edges_Y_Index, Outside_Global_Index,LogOfAreas,
-    Log_X_Index,Log_Y_Index,Orientation_Index,Luminosity_Index,SigmoidOfAreas
+    Log_X_Index,Log_Y_Index,Orientation_Index,Luminosity_Index,SigmoidOfAreas,
     A300, A400,
 ]], columns=[
     'X_Minimum', 'X_Maximum', 'Y_Minimum', 'Y_Maximum', 'Pixels_Areas',
@@ -56,7 +56,7 @@ input_data = pd.DataFrame([[
     'Maximum_of_Luminosity', 'Length_of_Conveyer', 'Steel_Plate_Thickness',
     'Edges_Index', 'Empty_Index', 'Square_Index', 'Outside_X_Index',
     'Edges_X_Index', 'Edges_Y_Index', 'Outside_Global_Index', 'LogOfAreas',
-    'Log_X_Index', 'Log_Y_Index', 'Orientation_Index', 'Luminosity_Index', 'SigmoidOfAreas'
+    'Log_X_Index', 'Log_Y_Index', 'Orientation_Index', 'Luminosity_Index', 'SigmoidOfAreas',
     'A300', 'A400'
 ])
 
