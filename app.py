@@ -127,4 +127,4 @@ st.dataframe(input_data)
 if st.button("🔍 Predict Fault Type"):
     prediction = model.predict(input_data)[0]
     predicted_label = target_mapping.get(prediction, "Unknown")
-    st.metric("Predicted Fault Type", f"{predicted_label})")
+    st.metric("Predicted Fault Type", f"{predicted_label}")
