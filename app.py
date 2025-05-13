@@ -68,5 +68,5 @@ input_data['Steel_Plate_Thickness'] = np.log1p(input_data['Steel_Plate_Thickness
 
 # Predict
 if st.button("Predict Fault Type"):
-    prediction = model.predict(input_data)
+    prediction = model.predict(input_data)[0]
     st.success(f"Predicted Fault Type (Label Encoded): {prediction}")
