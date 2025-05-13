@@ -6,6 +6,7 @@ import joblib
 # Load the trained model
 model = joblib.load("xgboost_model.pkl")
 
+#for asthetics
 st.title("Faulty Steel Plate Prediction")
 st.write("Enter the steel plate characteristics to predict the type of fault.")
 
@@ -37,6 +38,7 @@ Luminosity_Index = st.number_input("Luminosity_Index", value=-0.2913)
 SigmoidOfAreas = st.number_input("SigmoidOfAreas", value = 0.5822)
 Steel_type= st.selectbox("Steel_type", options=["A300", "A400"])
 
+# label encoding for steel type
 Steel_type_encoded = 0 if Steel_type == "A300" else 1
 
 # Build input DataFrame
@@ -66,7 +68,15 @@ input_data['Outside_X_Index'] = np.log1p(input_data['Outside_X_Index'])
 input_data['Outside_Global_Index'] = np.log1p(input_data['Outside_Global_Index'])
 input_data['Steel_Plate_Thickness'] = np.log1p(input_data['Steel_Plate_Thickness'])
 
+# to give user a input summary
+st.subheader("Input Summary")
+st.write(input_data)
+
+# decoding prediction for better readability
+target_mapping ={'Bumps': 0, 'Dirtiness': 1, 'K_Scatch': 2, 'Other_Faults': 3, 'Pastry': 4, 'Stains': 5, 'Z_Scratch': 6}
+
 # Predict
 if st.button("Predict Fault Type"):
     prediction = model.predict(input_data)[0]
-    st.success(f"Predicted Fault Type (Label Encoded): {prediction}")
+    predicted_label = target_mapping.get(prediction, "Unknown")
+    st.success(f"Predicted Fault Type: {predicted_label} (Label Encoded: {prediction})")
