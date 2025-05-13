@@ -37,9 +37,7 @@ Luminosity_Index = st.number_input("Luminosity_Index", value=-0.2913)
 SigmoidOfAreas = st.number_input("SigmoidOfAreas", value = 0.5822)
 Steel_type= st.selectbox("Steel_type", options=["A300", "A400"])
 
-# Manual one-hot encoding for TypeOfSteel
-A300 = 1 if TypeOfSteel == "A300" else 0
-A400 = 1 if TypeOfSteel == "A400" else 0
+Steel_type_encoded = 0 if Steel_type == "A300" else 1
 
 # Build input DataFrame
 input_data = pd.DataFrame([[
@@ -49,7 +47,7 @@ input_data = pd.DataFrame([[
     Edges_Index, Empty_Index, Square_Index, Outside_X_Index,
     Edges_X_Index, Edges_Y_Index, Outside_Global_Index,LogOfAreas,
     Log_X_Index,Log_Y_Index,Orientation_Index,Luminosity_Index,SigmoidOfAreas,
-    Steel_type
+    Steel_type_encoded
 ]], columns=[
     'X_Minimum', 'X_Maximum', 'Y_Minimum', 'Y_Maximum', 'Pixels_Areas',
     'X_Perimeter', 'Y_Perimeter', 'Sum_of_Luminosity', 'Minimum_of_Luminosity',
