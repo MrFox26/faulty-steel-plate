@@ -74,7 +74,6 @@ target_mapping ={'Bumps': 0, 'Dirtiness': 1, 'K_Scatch': 2, 'Other_Faults': 3, '
 # to give user a input summary
 st.subheader("Input Summary")
 st.write(input_data)
-st.dataframe(input_data)
 
 # Prediction
 if st.button("🔍 Predict Fault Type"):
