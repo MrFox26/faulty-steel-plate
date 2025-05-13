@@ -69,11 +69,11 @@ input_data['Outside_Global_Index'] = np.log1p(input_data['Outside_Global_Index']
 input_data['Steel_Plate_Thickness'] = np.log1p(input_data['Steel_Plate_Thickness'])
 
 # decoding prediction for better readability
-target_mapping ={'Bumps': 0, 'Dirtiness': 1, 'K_Scatch': 2, 'Other_Faults': 3, 'Pastry': 4, 'Stains': 5, 'Z_Scratch': 6}
+target_mapping = {0: 'Bumps', 1: 'Dirtiness', 2: 'K_Scatch', 3: 'Other_Faults', 4: 'Pastry', 5: 'Stains', 6: 'Z_Scratch'}
 
 # to give user a input summary
-st.subheader("Input Summary")
-st.write(input_data)
+st.subheader("📊 Input Summary")
+st.dataframe(input_data)
 
 # Prediction
 if st.button("🔍 Predict Fault Type"):
