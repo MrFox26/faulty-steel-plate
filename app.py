@@ -1,52 +1,63 @@
 # app.py
-
 import streamlit as st
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
-from xgboost import XGBClassifier
 
 # Load the trained model
-model = joblib.load('xgboost_model.pkl')
+model = joblib.load("xgboost_model.pkl")
 
-# Define the label mapping used earlier
-label_mapping = {
-    'Bumps': 0,
-    'Dirtiness': 1,
-    'K_Scatch': 2,
-    'Other_Faults': 3,
-    'Pastry': 4,
-    'Stains': 5,
-    'Z_Scratch': 6
-}
-inv_label_mapping = {v: k for k, v in label_mapping.items()}
+# Page title
+st.title("Faulty Steel Plate Prediction App")
 
-# UI title
-st.title("Steel Fault Type Prediction App")
+st.write("Enter the features below to predict the type of fault:")
 
-st.write("Enter the features to predict the fault type.")
+# User inputs
+X_Minimum = st.number_input("X_Minimum")
+X_Maximum = st.number_input("X_Maximum")
+Y_Minimum = st.number_input("Y_Minimum")
+Y_Maximum = st.number_input("Y_Maximum")
+Pixels_Areas = st.number_input("Pixels_Areas")
+X_Perimeter = st.number_input("X_Perimeter")
+Y_Perimeter = st.number_input("Y_Perimeter")
+Sum_of_Luminosity = st.number_input("Sum_of_Luminosity")
+Minimum_of_Luminosity = st.number_input("Minimum_of_Luminosity")
+Maximum_of_Luminosity = st.number_input("Maximum_of_Luminosity")
+Length_of_Conveyer = st.number_input("Length_of_Conveyer")
+TypeOfSteel = st.selectbox("Type Of Steel", ["A300", "A400"])
+Steel_Plate_Thickness = st.number_input("Steel_Plate_Thickness")
+Edges_Index = st.number_input("Edges_Index")
+Empty_Index = st.number_input("Empty_Index")
+Square_Index = st.number_input("Square_Index")
+Outside_X_Index = st.number_input("Outside_X_Index")
+Edges_X_Index = st.number_input("Edges_X_Index")
+Edges_Y_Index = st.number_input("Edges_Y_Index")
+Outside_Global_Index = st.number_input("Outside_Global_Index")
 
-# Feature input
-features = {}
+# One-hot encoding manually
+A300 = 1 if TypeOfSteel == "A300" else 0
+A400 = 1 if TypeOfSteel == "A400" else 0
 
-numerical_columns = [
-    'X_Minimum', 'X_Maximum', 'Y_Minimum', 'Y_Maximum', 'Pixels_Areas',
-    'X_Perimeter', 'Y_Perimeter', 'Sum_of_Luminosity', 'Minimum_of_Luminosity',
-    'Maximum_of_Luminosity', 'Length_of_Conveyer', 'TypeOfSteel', 
-    'Outside_X_Index', 'Steel_Plate_Thickness', 'Edges_Index', 'Empty_Index', 
-    'Square_Index', 'Outside_Global_Index'
-]
+# Combine all features into a DataFrame
+input_data = pd.DataFrame([[
+    X_Minimum, X_Maximum, Y_Minimum, Y_Maximum,
+    Pixels_Areas, X_Perimeter, Y_Perimeter,
+    Sum_of_Luminosity, Minimum_of_Luminosity, Maximum_of_Luminosity,
+    Length_of_Conveyer, Steel_Plate_Thickness,
+    Edges_Index, Empty_Index, Square_Index, Outside_X_Index,
+    Edges_X_Index, Edges_Y_Index, Outside_Global_Index,
+    A300, A400
+]], columns=[
+    'X_Minimum', 'X_Maximum', 'Y_Minimum', 'Y_Maximum',
+    'Pixels_Areas', 'X_Perimeter', 'Y_Perimeter',
+    'Sum_of_Luminosity', 'Minimum_of_Luminosity', 'Maximum_of_Luminosity',
+    'Length_of_Conveyer', 'Steel_Plate_Thickness',
+    'Edges_Index', 'Empty_Index', 'Square_Index', 'Outside_X_Index',
+    'Edges_X_Index', 'Edges_Y_Index', 'Outside_Global_Index',
+    'A300', 'A400'
+])
 
-# Create inputs for all features
-for col in numerical_columns:
-    features[col] = st.number_input(f"Enter {col}", value=0.0)
-
-# Steel_type input (binary: 0 or 1 after LabelEncoding)
-steel_type = st.selectbox("Steel Type", options=['A300', 'A400'])
-features['Steel_type'] = 0 if steel_type == 'A300' else 1
-
-# Predict button
+# Predict
 if st.button("Predict Fault Type"):
-    input_df = pd.DataFrame([features])
-    prediction = model.predict(input_df)[0]
-    st.success(f"Predicted Fault Type: **{inv_label_mapping[prediction]}**")
+    prediction = model.predict(input_data)[0]
+    st.success(f"Predicted Fault Type: {prediction}")
